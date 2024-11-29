@@ -151,8 +151,45 @@ install_vscode() {
   draw_line
   run_command "sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc"
   run_command "sudo sh -c 'echo -e \"[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\" > /etc/yum.repos.d/vscode.repo'"
-  run_command "sudo dnf check-update"
+  run_command "sudo dnf check-update | true"
   run_command "sudo dnf install -y code"
+}
+
+install_flatpack_packages() {
+  draw_line
+  local proceed=$(ask "Proceed with installing Flatpack packages?" "yes")
+  if [[ "$proceed" != "yes" ]]; then
+    echo "Skipping Flatpack packages installation."
+    return
+  fi
+  draw_line
+  echo "Installing Flatpack packages"
+  draw_line
+  run_command "sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+  run_command "flatpak install -y flathub org.videolan.VLC"
+  run_command "flatpak install -y flathub com.obsproject.Studio"
+  run_command "flatpak install -y flathub org.gimp.GIMP"
+  run_command "flatpak install -y flathub org.videolan.VLC"
+  run_command "flatpak install -y flathub org.inkscape.Inkscape"
+  run_command "flatpak install -y flathub com.jgraph.drawio.desktop"
+  run_command "flatpak install -y flathub org.olivevideoeditor.Olive"
+  run_command "flatpak install -y flathub com.spotify.Client"
+  run_command "flatpak install -y flathub com.stremio.Stremio"
+  run_command "flatpak install -y flathub org.chromium.Chromium"
+  run_command "flatpak install -y flathub com.google.Chrome"
+  run_command "flatpak install -y flathub com.brave.Browser"
+  run_command "flatpak install -y flathub org.remmina.Remmina"
+  run_command "flatpak install -y flathub org.wireshark.Wireshark"
+  run_command "flatpak install -y flathub com.getpostman.Postman"
+  run_command "flatpak install -y flathub org.gnome.Extensions"
+  run_command "flatpak install -y flathub com.slack.Slack"
+  run_command "flatpak install -y flathub com.discordapp.Discord"
+  run_command "flatpak install -y flathub com.microsoft.Teams"
+  run_command "flatpak install -y flathub com.skype.Client"
+  run_command "flatpak install -y flathub org.telegram.desktop"
+  run_command "flatpak install -y flathub io.bit3.WhatsAppQT"
+  run_command "flatpak install -y flathub im.riot.Riot"
+  run_command "flatpak install -y flathub us.zoom.Zoom"
 }
 
 display_completion_message() {
@@ -168,6 +205,7 @@ run_setup() {
   install_packages
   setup_firewall
   install_vscode
+  install_flatpack_packages
   display_completion_message
 }
 
