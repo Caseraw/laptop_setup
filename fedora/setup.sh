@@ -154,7 +154,7 @@ setup_podman(){
   run_command "systemctl --user start podman.socket"
   run_command "systemctl --user enable podman.socket"
   run_command "mkdir -p $HOME/Documents/Projects"
-  run_command "sudo semanage fcontext -a -t httpd_sys_content_t '$HOME/Documents/Projects(/.*)?'"
+  run_command "sudo semanage fcontext -a -t container_file_t '$HOME/Documents/Projects(/.*)?'"
   run_command "sudo restorecon -R -v $HOME/Documents/Projects"
 }
 
