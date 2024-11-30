@@ -120,6 +120,8 @@ install_packages() {
     akmod-nvidia xorg-x11-drv-nvidia-cuda \
     toolbox \
     podman \
+    podman-compose \
+    podman-docker \
     skopeo \
     buildah"
 }
@@ -137,6 +139,23 @@ setup_firewall() {
   run_command "sudo systemctl enable firewalld --now"
   run_command "sudo firewall-cmd --state"
   run_command "sudo firewall-cmd --list-all"
+}
+
+setup_podman(){
+  draw_line
+  local proceed=$(ask "Proceed with Podman setup?" "yes")
+  if [[ "$proceed" != "yes" ]]; then
+    echo "Skipping Podman setup."
+    return
+  fi
+  draw_line
+  echo "Setting up Podman."
+  draw_line
+  run_command "systemctl --user start podman.socket"
+  run_command "systemctl --user enable podman.socket"
+  run_command "mkdir -p $HOME/Documents/Projects"
+  run_command "sudo semanage fcontext -a -t httpd_sys_content_t '$HOME/Documents/Projects(/.*)?'"
+  run_command "sudo restorecon -R -v $HOME/Documents/Projects"
 }
 
 install_vscode() {
@@ -204,6 +223,7 @@ run_setup() {
   configure_sudoers
   install_packages
   setup_firewall
+  setup_podman
   install_vscode
   install_flatpack_packages
   display_completion_message
